@@ -1,0 +1,8 @@
+D:\文件\Github\StudyAtopicAntipyretic\StudyAtopicAntipyretic\bin\Debug\StudyAtopicAntipyretic.exe.config
+D:\文件\Github\StudyAtopicAntipyretic\StudyAtopicAntipyretic\bin\Debug\StudyAtopicAntipyretic.exe
+D:\文件\Github\StudyAtopicAntipyretic\StudyAtopicAntipyretic\bin\Debug\StudyAtopicAntipyretic.pdb
+D:\文件\Github\StudyAtopicAntipyretic\StudyAtopicAntipyretic\bin\Debug\DataSetLibrary.dll
+D:\文件\Github\StudyAtopicAntipyretic\StudyAtopicAntipyretic\bin\Debug\DataSetLibrary.pdb
+D:\文件\Github\StudyAtopicAntipyretic\StudyAtopicAntipyretic\obj\Debug\StudyAtopicAntipyretic.csprojResolveAssemblyReference.cache
+D:\文件\Github\StudyAtopicAntipyretic\StudyAtopicAntipyretic\obj\Debug\StudyAtopicAntipyretic.exe
+D:\文件\Github\StudyAtopicAntipyretic\StudyAtopicAntipyretic\obj\Debug\StudyAtopicAntipyretic.pdb

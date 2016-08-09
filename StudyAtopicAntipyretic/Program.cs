@@ -17,17 +17,22 @@ namespace StudyAtopicAntipyretic
             {
                 Console.SetOut(sw);
                 //table1_populationCount();
-                table2_atopicCount();
+                //table2_atopicCount();
 
                 Console.WriteLine("End of Program.");
             }
 
         }
 
-        static void writeBar()
+
+
+        static void table3()
         {
-            Console.WriteLine("".PadLeft(30, '='));
+
         }
+      
+
+
 
         static void table2_atopicCount()
         {
@@ -38,10 +43,79 @@ namespace StudyAtopicAntipyretic
             var IDData = DataReader.LoadData(IDFiles);
             writeBar();
 
+            string AllYoungerThan1YearFolderPath = @"D:\NHIRD\STEP8 小於一歲所有CD_DD之PBD";
+            var AllYoungerThan1YearFiles = Directory.EnumerateFiles(AllYoungerThan1YearFolderPath, "*All*");
+            var ALLPBD = DataReader.LoadData(AllYoungerThan1YearFiles);
+            writeBar();
+
             string AtopicFolder = @"D:\NHIRD\STEP10 小於15歲 過敏診斷以及用氣喘藥的PBD";
             var AtopicFiles = Directory.EnumerateFiles(AtopicFolder, "*All*");
             var PBD_Atopic = DataReader.LoadData(AtopicFiles);
             writeBar();
+
+            string test_title;
+
+            var Criteria_AR_OPD_0or1 = new List<Criteria>();
+            Criteria_AR_OPD_0or1.Add(new Criteria("Allergic Rhinitis-門診次數", "0", PBD_Atopic.indexTable));
+            Criteria_AR_OPD_0or1.Add(new Criteria("Allergic Rhinitis-門診次數", "1", PBD_Atopic.indexTable));
+            var Criteria_NoAR_Admission = new List<Criteria>();
+            Criteria_NoAR_Admission.Add(new Criteria("Allergic Rhinitis-住院次數", "0", PBD_Atopic.indexTable));
+            var PBD_AR_hasMoreThan1OPD = PBD_Atopic.select(new List<Criteria>(), Criteria_AR_OPD_0or1);
+            var PBD_AR_hasAdmission = PBD_Atopic.select(new List<Criteria>(), Criteria_NoAR_Admission);
+            var PBD_AR_joined = PBD_AR_hasMoreThan1OPD.joinData(PBD_AR_hasAdmission);
+
+            test_title = "Allergic rhinitis過敏性鼻炎";
+            var IDS_AR_final = IDData.selectIn(PBD_AR_joined, new string[] { "ID", "Birthday" }, new string[] { "ID", "Birthday" });
+            IDS_AR_final.ExportData(outputDir + $@"\{test_title}_IDS.txt");
+            var PBD_AR_final = ALLPBD.selectIn(IDS_AR_final, new string[] { "ID", "Birthday" }, new string[] { "ID", "Birthday" });
+            PBD_AR_final.ExportData(outputDir + $@"\{test_title}_BPD.txt");
+
+            var Criteria_AD_OPD_0or1 = new List<Criteria>();
+            Criteria_AD_OPD_0or1.Add(new Criteria("Atopic Dermatitis-門診次數", "0", PBD_Atopic.indexTable));
+            Criteria_AD_OPD_0or1.Add(new Criteria("Atopic Dermatitis-門診次數", "1", PBD_Atopic.indexTable));
+            var Criteria_NoAD_Admission = new List<Criteria>();
+            Criteria_NoAD_Admission.Add(new Criteria("Atopic Dermatitis-住院次數", "0", PBD_Atopic.indexTable));
+            var PBD_AD_hasOPD = PBD_Atopic.select(new List<Criteria>(), Criteria_AD_OPD_0or1);
+            var PBD_AD_hasAdmission = PBD_Atopic.select(new List<Criteria>(), Criteria_NoAD_Admission);
+            var PBD_AD_joined = PBD_AD_hasOPD.joinData(PBD_AD_hasAdmission);
+
+            test_title = "Atopic Dermatitis異位性皮膚炎";
+            var IDS_AD_final = IDData.selectIn(PBD_AD_joined, new string[] { "ID", "Birthday" }, new string[] { "ID", "Birthday" });
+            IDS_AD_final.ExportData(outputDir + $@"\{test_title}_IDS.txt");
+            var PBD_AD_final = ALLPBD.selectIn(IDS_AD_final, new string[] { "ID", "Birthday" }, new string[] { "ID", "Birthday" });
+            PBD_AD_final.ExportData(outputDir + $@"\{test_title}_BPD.txt");
+
+            var Criteria_Asthma_OPD_0or1 = new List<Criteria>();
+            Criteria_Asthma_OPD_0or1.Add(new Criteria("Asthma-門診次數", "0", PBD_Atopic.indexTable));
+            Criteria_Asthma_OPD_0or1.Add(new Criteria("Asthma-門診次數", "1", PBD_Atopic.indexTable));
+            var PBD_Asthma_Has_OPD = PBD_Atopic.select(new List<Criteria>(), Criteria_Asthma_OPD_0or1);
+            var Criteria_NoAsthma_Drug = new List<Criteria>();
+            Criteria_NoAsthma_Drug.Add(new Criteria("[order]AsthmaDrug-門診次數", "0", PBD_Atopic.indexTable));
+            var PBD_Asthma_Has_Drug = PBD_Atopic.select(new List<Criteria>(), Criteria_NoAsthma_Drug);
+            var PBD_Asthma_HasOPD_and_Drug = PBD_Asthma_Has_OPD.selectIn(PBD_Asthma_Has_Drug, new string[] { "ID", "Birthday" }, new string[] { "ID", "Birthday" });
+
+            var Criteria_Ashtma_NoAdmission = new List<Criteria>();
+            Criteria_Ashtma_NoAdmission.Add(new Criteria("Asthma-住院次數", "0", PBD_Atopic.indexTable));
+            var PBD_Asthma_Has_Admission = PBD_Atopic.select(new List<Criteria>(), Criteria_Ashtma_NoAdmission);
+
+            var PBD_Asthma_Joined = PBD_Asthma_Has_OPD.joinData(PBD_Asthma_Has_Admission);
+
+            test_title = "Asthma氣喘";
+            var IDS_Asthma_final = IDData.selectIn(PBD_Asthma_Joined, new string[] { "ID", "Birthday" }, new string[] { "ID", "Birthday" });
+            IDS_Asthma_final.ExportData(outputDir + $@"\{test_title}_IDS.txt");
+            var PBD_Asthma_final = ALLPBD.selectIn(PBD_Asthma_Joined, new string[] { "ID", "Birthday" }, new string[] { "ID", "Birthday" });
+            PBD_Asthma_final.ExportData(outputDir + $@"\{test_title}_BPD.txt");
+
+            test_title = "Non-Atopic";
+            var IDS_NonAtopic_final = IDData.selectNotIn(PBD_Asthma_Joined, new string[] { "ID", "Birthday" }, new string[] { "ID", "Birthday" })
+                                            .selectNotIn(PBD_AD_joined, new string[] { "ID", "Birthday" }, new string[] { "ID", "Birthday" })
+                                            .selectNotIn(PBD_AR_joined, new string[] { "ID", "Birthday" }, new string[] { "ID", "Birthday" });
+            IDS_NonAtopic_final.ExportData(outputDir + $@"\{test_title}_IDS.txt");
+            var PBD_NonAtopic_final = ALLPBD.selectNotIn(PBD_Asthma_Joined, new string[] { "ID", "Birthday" }, new string[] { "ID", "Birthday" })
+                                            .selectNotIn(PBD_AD_joined, new string[] { "ID", "Birthday" }, new string[] { "ID", "Birthday" })
+                                            .selectNotIn(PBD_AR_joined, new string[] { "ID", "Birthday" }, new string[] { "ID", "Birthday" });
+            PBD_NonAtopic_final.ExportData(outputDir + $@"\{test_title}_BPD.txt");
+
 
         }
 
@@ -131,6 +205,12 @@ namespace StudyAtopicAntipyretic
             PBDALL.ExportData(outputDir + $@"\{test_title}PBDALL.txt");
             writeBar();
         }
+
+        static void writeBar()
+        {
+            Console.WriteLine("".PadLeft(30, '='));
+        }
     }
+
 }
 
